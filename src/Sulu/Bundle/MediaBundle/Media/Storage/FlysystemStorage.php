@@ -49,12 +49,14 @@ abstract class FlysystemStorage implements StorageInterface
         if (!$this->filesystem->has($segment)) {
             $this->filesystem->createDir($segment);
         }
+        
+        $visibility = $this->getStorageOption($storageOptions, 'visibility') ?? AdapterInterface::VISIBILITY_PUBLIC;
 
         try {
             $this->filesystem->writeStream(
                 $filePath,
                 \fopen($tempPath, 'r'),
-                ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+                ['visibility' => $visibility]
             );
         } catch (FileExistsException $exception) {
             throw new FilenameAlreadyExistsException($filePath);
